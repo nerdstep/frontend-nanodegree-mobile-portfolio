@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
 html {
   font-size: 100%;
   overflow-y: scroll;
@@ -46,4 +48,17 @@ footer span { float: right; font-style: italic; }
 @media only screen and (max-width: 480px) {
   body { font-size: 12px;}
   header p { padding-left: 4.5em;}
+}
+
+/* print styles */
+
+@media print {
+  * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; }
+  a, a:visited { color: #444 !important; text-decoration: underline; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page { margin: 0.5cm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3{ page-break-after: avoid; }
 }
