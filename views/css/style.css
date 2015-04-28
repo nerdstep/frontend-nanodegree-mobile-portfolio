@@ -1,14 +1,17 @@
+
 /** {
   outline: 1px solid red !important;
 }*/
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -box-sizing: border-box;
 }
 
+
 body {
-  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   background: black;
 }
 
@@ -38,6 +41,10 @@ form {
 .randomPizzaContainer {
   float: left;
   display: flex;
+}
+
+.randomPizzaContainer {
+  text-transform: capitalize;
 }
 
 .randomPizzaContainer:after {
