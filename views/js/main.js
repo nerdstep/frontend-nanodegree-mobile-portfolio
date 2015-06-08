@@ -16,6 +16,39 @@
  cameron *at* udacity *dot* com
  */
 
+function throttle(func, wait, options) {
+  var context, args, result;
+  var timeout = null;
+  var previous = 0;
+  if (!options) options = {};
+  var later = function() {
+    previous = options.leading === false ? 0 : Date.now;
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+  return function() {
+    var now = Date.now;
+    if (!previous && options.leading === false) previous = now;
+    var remaining = wait - (now - previous);
+    context = this;
+    args = arguments;
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+      previous = now;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+    return result;
+  };
+}
+
+
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
 var pizzaIngredients = {};
@@ -1323,15 +1356,15 @@ var items = document.getElementsByClassName('mover');
 
 // Moves the sliding background pizzas based on scroll position
 function updatePositions() {
-  var i;
+  var i, phase;
   frame++;
   window.performance.mark("mark_start_frame");
 
+  // OPTIMIZATION: moved scrollTop calculation outside of for loop
   var scrollTop = document.body.scrollTop / 1250;
 
   for (i = 0; i < items.length; i++) {
-    // moved scrollTop calculation outside of for loop
-    var phase = Math.sin(scrollTop + (i % 5));
+    phase = Math.sin(scrollTop + (i % 5));
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
 
@@ -1345,8 +1378,46 @@ function updatePositions() {
   }
 }
 
+/**
+ * OPTIMIZATION
+ *
+ * http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+ */
+
+function throttleAnimationFrame(cb, el) {
+  var req, args, self, f = requestAnimationFrame;
+
+  return function () {
+    req || (req = f(chk, el));
+    args = arguments;
+    self = this;
+  };
+
+  function chk() {
+    if (args && self) {
+      req = f(chk, el);
+      cb.apply(self, args);
+    } else req = null;
+    args = self = null;
+  }
+}
+
+var t = throttleAnimationFrame(updatePositions);
+
+var throttledScroll = throttle(function () {
+  updatePositions();
+}, 500);
+
 // runs updatePositions on scroll
-window.addEventListener('scroll', updatePositions);
+//window.addEventListener('scroll', function () {
+ // window.requestAnimationFrame(updatePositions);
+//});
+
+window.addEventListener('scroll', function () {
+  t()
+});
+
+//window.addEventListener('scroll', throttledScroll);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function () {
