@@ -16,38 +16,6 @@
  cameron *at* udacity *dot* com
  */
 
-function throttle(func, wait, options) {
-  var context, args, result;
-  var timeout = null;
-  var previous = 0;
-  if (!options) options = {};
-  var later = function() {
-    previous = options.leading === false ? 0 : Date.now;
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) context = args = null;
-  };
-  return function() {
-    var now = Date.now;
-    if (!previous && options.leading === false) previous = now;
-    var remaining = wait - (now - previous);
-    context = this;
-    args = arguments;
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-      previous = now;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-    return result;
-  };
-}
-
 
 // As you may have realized, this website randomly generates pizzas.
 // Here are arrays of all possible pizza ingredients.
@@ -1169,28 +1137,6 @@ var makeRandomPizza = function () {
   return html;
 };
 
-/*
- <div id="pizza1" class="randomPizzaContainer" style="width:33.33%;">
- <div class="col-md-6">
- <img src="images/pizza.png" class="img-responsive">
- </div>
- <div class="col-md-6">
- <h4>The Cameron Special</h4>
- <ul>
- <li>Chicken</li>
- <li>Hot Sauce</li>
- <li>White Crust</li>
- </ul>
- </div>
- </div>
- */
-
-var pizzaGen2 = function (i) {
-  return '<div id="pizza' + i + '" class="randomPizzaContainer" style="width:33.33%;height:325px;">'
-  + '<div class="col-md-6"><img src="images/pizza.png" class="img-responsive"></div>'
-  + '<div class="col-md-6"><h4>' + randomName() + '</h4><ul>' + makeRandomPizza() + '</ul></div></div>';
-};
-
 
 // returns a DOM element for each pizza
 var pizzaElementGenerator = function (i) {
@@ -1316,17 +1262,14 @@ var resizePizzas = function (size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 var docFrag = document.createDocumentFragment();
-var html = [];
+
 // This for-loop actually creates and appends all of the pizzas when the page loads
 for (var i = 2; i < 100; i++) {
   // changed this to use the cached selector
   docFrag.appendChild(pizzaElementGenerator(i));
-  //$randomPizzas.appendChild(pizzaElementGenerator(i));
-  //html.push(pizzaElementGenerator(i));
-  //html.push(pizzaGen2(i));
 }
 $randomPizzas.appendChild(docFrag);
-//$randomPizzas.innerHTML = html.join('');
+
 
 // User Timing API again. These measurements tell you how long it took to generate the initial pizzas
 window.performance.mark("mark_end_generating");
@@ -1383,8 +1326,7 @@ function updatePositions() {
  *
  * http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
-
-function throttleAnimationFrame(cb, el) {
+function throttleAnimation(cb, el) {
   var req, args, self, f = requestAnimationFrame;
 
   return function () {
@@ -1402,22 +1344,10 @@ function throttleAnimationFrame(cb, el) {
   }
 }
 
-var t = throttleAnimationFrame(updatePositions);
-
-var throttledScroll = throttle(function () {
-  updatePositions();
-}, 500);
-
-// runs updatePositions on scroll
-//window.addEventListener('scroll', function () {
- // window.requestAnimationFrame(updatePositions);
-//});
-
 window.addEventListener('scroll', function () {
-  t()
+  throttleAnimation(updatePositions);
 });
 
-//window.addEventListener('scroll', throttledScroll);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function () {

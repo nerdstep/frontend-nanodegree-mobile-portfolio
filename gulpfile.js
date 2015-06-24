@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var del = require('del');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
-var inline = require('gulp-inline');
 var uglify = require('gulp-uglify');
 var minifyCss = require('gulp-minify-css');
 var imagemin = require('gulp-imagemin');
