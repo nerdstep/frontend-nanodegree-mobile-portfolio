@@ -1251,7 +1251,9 @@ var resizePizzas = function (size) {
   // User Timing API is awesome
   window.performance.mark("mark_end_resize");
   window.performance.measure("measure_pizza_resize", "mark_start_resize", "mark_end_resize");
+
   var timeToResize = window.performance.getEntriesByName("measure_pizza_resize");
+
   console.log("Time to resize pizzas: " + timeToResize[0].duration + "ms");
 };
 
@@ -1270,6 +1272,7 @@ $randomPizzas.appendChild(docFrag);
 // User Timing API again. These measurements tell you how long it took to generate the initial pizzas
 window.performance.mark("mark_end_generating");
 window.performance.measure("measure_pizza_generation", "mark_start_generating", "mark_end_generating");
+
 var timeToGenerate = window.performance.getEntriesByName("measure_pizza_generation");
 
 console.log("Time to generate pizzas on load: " + timeToGenerate[0].duration + "ms");
@@ -1282,15 +1285,16 @@ var frame = 0;
 function logAverageFrame(times) {   // times is the array of User Timing measurements from updatePositions()
   var numberOfEntries = times.length;
   var sum = 0;
+
   for (var i = numberOfEntries - 1; i > numberOfEntries - 11; i--) {
     sum = sum + times[i].duration;
   }
+
   console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
 // The following code for sliding background pizzas was pulled from Ilya's demo found at:
 // https://www.igvita.com/slides/2012/devtools-tips-and-tricks/jank-demo.html
-
 
 var items = document.getElementsByClassName('mover');
 
