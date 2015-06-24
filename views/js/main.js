@@ -1056,7 +1056,7 @@ var adjectives = ["dark",
   "apocalyptic",
   "insulting",
   "praise",
-  "scientific"];  // types of adjectives for pizza titles
+  "scientific"]; // types of adjectives for pizza titles
 var nouns = ["animals",
   "everyday",
   "fantasy",
@@ -1064,7 +1064,7 @@ var nouns = ["animals",
   "horror",
   "jewelry",
   "places",
-  "scifi"];                        // types of nouns for pizza titles
+  "scifi"]; // types of nouns for pizza titles
 
 // Generates random numbers for getAdj and getNoun functions and returns a new pizza name
 function generator(adj, noun) {
@@ -1072,7 +1072,7 @@ function generator(adj, noun) {
   var nouns = getNoun(noun);
   var randomAdjective = parseInt(Math.random() * adjectives.length);
   var randomNoun = parseInt(Math.random() * nouns.length);
-  //var name = "The " + adjectives[randomAdjective].capitalize() + " " + nouns[randomNoun].capitalize();
+
   // OPTIMIZATION: remove String.capitalize in favor of CSS rule
   return "The " + adjectives[randomAdjective] + " " + nouns[randomNoun];
 }
@@ -1111,30 +1111,27 @@ var ingredientItemizer = function (string) {
 
 // Returns a string with random pizza ingredients nested inside <li> tags
 var makeRandomPizza = function () {
-  var pizza = [];
-
+  var pizza = [], i, j, k;
   var numberOfMeats = Math.floor((Math.random() * 4));
   var numberOfNonMeats = Math.floor((Math.random() * 3));
   var numberOfCheeses = Math.floor((Math.random() * 2));
 
-  for (var i = 0; i < numberOfMeats; i++) {
+  for (i = 0; i < numberOfMeats; i++) {
     pizza.push(selectRandomMeat());
   }
 
-  for (var j = 0; j < numberOfNonMeats; j++) {
+  for (j = 0; j < numberOfNonMeats; j++) {
     pizza.push(selectRandomNonMeat());
   }
 
-  for (var k = 0; k < numberOfCheeses; k++) {
+  for (k = 0; k < numberOfCheeses; k++) {
     pizza.push(selectRandomCheese());
   }
 
   pizza.push(selectRandomSauce());
   pizza.push(selectRandomCrust());
 
-  var html = '<li>' + pizza.join('</li><li>') + '</li>';
-  //console.log(html);
-  return html;
+  return '<li>' + pizza.join('</li><li>') + '</li>';
 };
 
 
@@ -1155,7 +1152,7 @@ var pizzaElementGenerator = function (i) {
   pizzaContainer.classList.add("randomPizzaContainer");
   pizzaContainer.style.width = "33.33%";
   pizzaContainer.style.height = "325px";
-  pizzaContainer.id = "pizza" + i;                // gives each pizza element a unique id
+  pizzaContainer.id = "pizza" + i; // gives each pizza element a unique id
   pizzaImageContainer.classList.add("col-md-6");
 
   pizzaImage.src = "images/pizza.png";
@@ -1239,8 +1236,7 @@ function determineDx(elem, size) {
 function changePizzaSizes(size) {
   for (var i = 0; i < $pizzaCtr.length; i++) {
     var dx = determineDx($pizzaCtr[i], size);
-    var newwidth = ($pizzaCtr[i].offsetWidth + dx) + 'px';
-    $pizzaCtr[i].style.width = newwidth;
+    $pizzaCtr[i].style.width = ($pizzaCtr[i].offsetWidth + dx) + 'px';
   }
 }
 
@@ -1275,6 +1271,7 @@ $randomPizzas.appendChild(docFrag);
 window.performance.mark("mark_end_generating");
 window.performance.measure("measure_pizza_generation", "mark_start_generating", "mark_end_generating");
 var timeToGenerate = window.performance.getEntriesByName("measure_pizza_generation");
+
 console.log("Time to generate pizzas on load: " + timeToGenerate[0].duration + "ms");
 
 // Iterator for number of times the pizzas in the background have scrolled.
@@ -1300,7 +1297,9 @@ var items = document.getElementsByClassName('mover');
 // Moves the sliding background pizzas based on scroll position
 function updatePositions() {
   var i, phase;
+
   frame++;
+
   window.performance.mark("mark_start_frame");
 
   // OPTIMIZATION: moved scrollTop calculation outside of for loop
@@ -1315,6 +1314,7 @@ function updatePositions() {
   // Super easy to create custom metrics.
   window.performance.mark("mark_end_frame");
   window.performance.measure("measure_frame_duration", "mark_start_frame", "mark_end_frame");
+
   if (frame % 10 === 0) {
     var timesToUpdatePosition = window.performance.getEntriesByName("measure_frame_duration");
     logAverageFrame(timesToUpdatePosition);
@@ -1323,7 +1323,7 @@ function updatePositions() {
 
 /**
  * OPTIMIZATION
- *
+ * Use requestAnimationFrame to optimize concurrent animations together into a single reflow and repaint cycle
  * http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
 function throttleAnimation(cb, el) {
@@ -1344,9 +1344,7 @@ function throttleAnimation(cb, el) {
   }
 }
 
-window.addEventListener('scroll', function () {
-  throttleAnimation(updatePositions);
-});
+window.addEventListener('scroll', throttleAnimation(updatePositions));
 
 
 // Generates the sliding pizzas when the page loads.
