@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  Welcome to the 60fps project! Your goal is to make Cam's Pizzeria website run
  jank-free at 60 frames per second.
@@ -1105,10 +1107,6 @@ var selectRandomCrust = function () {
   return pizzaIngredients.crusts[Math.floor((Math.random() * pizzaIngredients.crusts.length))];
 };
 
-var ingredientItemizer = function (string) {
-  return "<li>" + string + "</li>";
-};
-
 // Returns a string with random pizza ingredients nested inside <li> tags
 var makeRandomPizza = function () {
   var pizza = [], i, j, k;
@@ -1232,11 +1230,17 @@ function determineDx(elem, size) {
   return (newsize - oldsize) * windowwidth;
 }
 
+
+
+
 // Iterates through pizza elements on the page and changes their widths
 function changePizzaSizes(size) {
-  for (var i = 0; i < $pizzaCtr.length; i++) {
-    var dx = determineDx($pizzaCtr[i], size);
-    $pizzaCtr[i].style.width = ($pizzaCtr[i].offsetWidth + dx) + 'px';
+  var pizzaCount = $pizzaCtr.length;
+  var dx = determineDx($pizzaCtr[0], size);
+  var newwidth = ($pizzaCtr[0].offsetWidth + dx) + 'px';
+
+  for (var i = 0; i < pizzaCount; i++) {
+    $pizzaCtr[i].style.width = newwidth;
   }
 }
 
@@ -1353,10 +1357,17 @@ window.addEventListener('scroll', throttleAnimation(updatePositions));
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function () {
+  // calculate rows based on window height
+  var rows = Math.floor(window.innerHeight / 100);
   var cols = 8;
   var s = 256;
+
+  // determine number of elements to create
+  var count = rows * cols;
+
   var $el = document.getElementById('movingPizzas1');
-  for (var i = 0; i < 200; i++) {
+
+  for (var i = 0; i < count; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -1366,5 +1377,6 @@ document.addEventListener('DOMContentLoaded', function () {
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     $el.appendChild(elem);
   }
+
   updatePositions();
 });
